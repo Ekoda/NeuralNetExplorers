@@ -22,8 +22,7 @@ The species are represented as:
 
 ## Usage
 
-1. Clone the repository:
-´´´git clone https://github.com/yourusername/NeuralNetExplorers.git´´´
+1. Clone the repository: '''git clone https://github.com/yourusername/NeuralNetExplorers.git'''
 Add your dataset as fluffy_or_spikey.csv in the project folder. The dataset should have three columns: height, color, and species.
 
 2. Install the required dependencies:
