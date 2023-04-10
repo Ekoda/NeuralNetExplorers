@@ -25,10 +25,8 @@ The species are represented as:
 1. Clone the repository: '''git clone https://github.com/yourusername/NeuralNetExplorers.git'''
 Add your dataset as fluffy_or_spikey.csv in the project folder. The dataset should have three columns: height, color, and species.
 
-2. Install the required dependencies:
-´´´pip install numpy pandas´´´
-4. Run the Neuron code to train the neuron:
-´´´python neuron.py´´´
+2. Install the required dependencies: ´pip install numpy pandas´
+4. Run the Neuron code to train the neuron: ´python neuron.py´
 
 ## Neuron Code Overview
 
