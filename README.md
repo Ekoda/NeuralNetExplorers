@@ -1,4 +1,4 @@
-# NeuralNetExplorers: Discover the Magic of Neural Networks
+# NeuralNetExplorers: the Magic of Neural Networks
 
 Discover the magic of neural networks with NeuralNetExplorers, an educational repository focused on building a first principles understanding of neurons and neural networks
 
