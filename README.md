@@ -1,6 +1,6 @@
 # NeuralNetExplorers: Discover the Magic of Neural Networks
 
-Discover the magic of neural networks with NeuralNetExplorers, an educational repository focused on simplifying the understanding of neurons and neural networks using an engaging species classification example.
+Discover the magic of neural networks with NeuralNetExplorers, an educational repository focused on simplifying the understanding of neurons and neural networks.
 
 ## Dataset
 
