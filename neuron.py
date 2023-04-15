@@ -17,20 +17,18 @@ class Neuron:
 
     def backpropagation(self, X, y, prediction, learning_rate):
         bias_gradient = self.sigmoid_derivative(prediction) * (prediction - y)
-        weight_gradients = np.array([X[0] * bias_gradient, X[1] * bias_gradient])
-        self.w = np.array([
-            self.w[0] + -learning_rate * weight_gradients[0],
-            self.w[1] + -learning_rate * weight_gradients[1]
-            ]) 
-        self.b = -learning_rate * bias_gradient
+        weight_gradients = np.array([x * bias_gradient for x in X])
+        for i, gradient in enumerate(weight_gradients):
+            self.w[i] -= learning_rate * gradient
+        self.b -= learning_rate * bias_gradient
 
     def train (self, X, y, epochs=10, learning_rate=0.05):
         for epoch in range(epochs + 1):
             losses = np.array([])
-            for i, x in enumerate(X):
-                prediction, loss = self.forward_pass(x, y[i])
+            for Xi, yi in zip(X, y):
+                prediction, loss = self.forward_pass(Xi, yi)
                 losses = np.append(losses, loss)
-                self.backpropagation(x, y[i], prediction, learning_rate)
+                self.backpropagation(Xi, yi, prediction, learning_rate)
             if epoch < 10 or epoch % 10 == 0:
                 print(f"Epoch: {epoch}, Loss: {losses.mean()}")
 
