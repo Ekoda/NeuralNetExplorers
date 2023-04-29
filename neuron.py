@@ -15,8 +15,11 @@ class Neuron:
     def binary_cross_entropy_loss(self, prediction, y):
         return -y * np.log(prediction) - (1 - y) * np.log(1 - prediction)
 
+    def binary_cross_entropy_loss_derivative(self, prediction, y):
+        return -y / prediction + (1 - y) / (1 - prediction)
+
     def backpropagation(self, X, y, prediction, learning_rate):
-        bias_gradient = self.sigmoid_derivative(prediction) * (prediction - y)
+        bias_gradient = self.sigmoid_derivative(prediction) * self.binary_cross_entropy_loss_derivative(prediction, y)
         weight_gradients = np.array([x * bias_gradient for x in X])
         for i, gradient in enumerate(weight_gradients):
             self.w[i] -= learning_rate * gradient

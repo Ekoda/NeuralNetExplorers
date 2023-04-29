@@ -5,7 +5,8 @@ class Neuron:
     def __init__(self, n_inputs=2, activation='tanh'):
         self.w = np.random.randn(n_inputs) * 0.01
         self.b = np.random.randn() * 0.01,
-        self.activation_type = activation
+        self.activation_type = activation,
+        self.output = None
 
     def activation(self, n):
         if self.activation_type == 'sigmoid':
@@ -20,12 +21,13 @@ class Neuron:
             return 1 - n ** 2
 
     def forward(self, X):
-        return self.activation(np.dot(self.w, X) + self.b)
+        output = self.activation(np.dot(self.w, X) + self.b)
+        self.output = output 
+        return output
     
 
 def forward_layer(neurons, inputs):
     return np.array([neuron.forward(inputs) for neuron in neurons])
-    # return np.array([output for output in map(lambda neuron: neuron.forward(inputs), neurons)])
 
 
 class InputLayer:
