@@ -4,9 +4,10 @@ import pandas as pd
 class Neuron:
     def __init__(self, n_inputs=2, activation='tanh'):
         self.w = np.random.randn(n_inputs) * 0.01
-        self.b = np.random.randn() * 0.01,
-        self.activation_type = activation,
+        self.b = np.random.randn() * 0.01
+        self.activation_type = activation
         self.output = None
+        self.inputs = None
 
     def activation(self, n):
         if self.activation_type == 'sigmoid':
@@ -22,7 +23,7 @@ class Neuron:
 
     def forward(self, X):
         output = self.activation(np.dot(self.w, X) + self.b)
-        self.output = output 
+        self.inputs, self.output = X, output
         return output
     
 
@@ -60,26 +61,46 @@ class OutputLayer:
     
 
 class NeuralNetwork:
-    def __init__(self, input_layer, hidden_layers, output_layer):
+    def __init__(self, input_layer, hidden_layers, output_layer, loss='binary_cross_entropy'):
         self.input_layer = input_layer
         self.hidden_layers = hidden_layers
         self.output_layer = output_layer
+        self.loss = loss
 
-    def binary_cross_entropy_loss(self, prediction, y):
-        return -y * np.log(prediction) - (1 - y) * np.log(1 - prediction)
+    def calculate_loss(self, predictions, y):
+        if self.loss == 'binary_cross_entropy':
+            return [-y * np.log(prediction) - (1 - y) * np.log(1 - prediction) for prediction in predictions]
     
-    def backpropagation(X, y, prediction, learning_rate):
-        pass
+    def loss_derivative(self, prediction, y):
+        if self.loss == 'binary_cross_entropy':
+            return -y / prediction + (1 - y) / (1 - prediction)
 
-    def train (self, X, y, epochs=10, learning_rate=0.05):
-        pass
+    def backpropagation(self, X, y, predictions, learning_rate):
+        
+        # calculate gradients and update output layer parameters
+        for neuron, prediction in zip(self.output_layer.neurons, predictions):
+            bias_gradient = neuron.activation_derivative(prediction) * self.loss_derivative(prediction, y)
+            weight_gradients = [x * bias_gradient for x in neuron.inputs]
+            neuron.w -= learning_rate * np.array(weight_gradients)
+            neuron.b -= learning_rate * bias_gradient
+        
+
+    def train(self, X, y, epochs=10, learning_rate=0.05):
+        for epoch in range(epochs):
+            losses = np.array([])
+            for Xi, yi in zip(X, y):
+                predictions, loss = self.forward_pass(Xi, yi)
+                losses = np.append(losses, loss)
+                self.backpropagation(Xi, yi, predictions, learning_rate)
+            if epoch < 10 or epoch % 10 == 0:
+                print(f"Epoch: {epoch}, Loss: {losses.mean()}")
 
     def forward_pass(self, X, y=None):
         input_layer_output = self.input_layer.forward(X)
         hidden_layers_output = self.hidden_layers.forward(input_layer_output)
-        prediction = self.output_layer.forward(hidden_layers_output)
-        loss = self.binary_cross_entropy_loss(prediction, y) if y is not None else None
-        return prediction, loss
+        predictions = self.output_layer.forward(hidden_layers_output)
+        losses = self.calculate_loss(predictions, y) if y is not None else None
+        return predictions, losses
     
 
 input_layer = InputLayer(n_inputs=2, activation='tanh')
@@ -88,6 +109,10 @@ output_layer = OutputLayer(prev_layer=hidden_layers, activation='sigmoid')
 
 model = NeuralNetwork(input_layer, hidden_layers, output_layer)
 
-prediction, loss = model.forward_pass(np.array([1, 2]), 1)
+# prediction, loss = model.forward_pass(np.array([1, 2]), 1)
+# print(prediction, loss)
 
-print(prediction, loss)
+df = pd.read_csv('fluffy_or_spikey.csv')
+X, y = df[['height', 'color']].to_numpy(), df['species'].to_numpy()
+
+model.train(X, y, 2)
