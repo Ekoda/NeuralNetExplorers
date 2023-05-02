@@ -3,9 +3,11 @@ import pandas as pd
 
 class Neuron:
     def __init__(self, n_inputs=2, activation='tanh'):
-        self.w = np.random.randn(n_inputs) * 0.01
-        self.b = np.random.randn() * 0.01
+        self.w = np.random.randn(n_inputs) * 0.1
+        self.b = np.random.randn() * 0.1
         self.activation_type = activation
+        self.gradient = 0
+        self.w_gradients = np.zeros(n_inputs)
         self.output = None
         self.inputs = None
 
@@ -15,11 +17,19 @@ class Neuron:
         elif self.activation_type == 'tanh':
             return np.tanh(n)
 
-    def activation_derivative(self, n):
+    def activation_derivative(self):
         if self.activation_type == 'sigmoid':
-            return n * (1 - n)
+            return self.output * (1 - self.output)
         elif self.activation_type == 'tanh':
-            return 1 - n ** 2
+            return 1 - self.output ** 2
+        
+    def compute_gradients(self, upstream_gradient):
+        self.gradient = upstream_gradient * self.activation_derivative()
+        self.w_gradients = self.gradient * self.inputs
+
+    def update_parameters(self, learning_rate):
+        self.w -= learning_rate * self.w_gradients
+        self.b -= learning_rate * self.gradient
 
     def forward(self, X):
         output = self.activation(np.dot(self.w, X) + self.b)
@@ -67,23 +77,33 @@ class NeuralNetwork:
         self.output_layer = output_layer
         self.loss = loss
 
-    def calculate_loss(self, predictions, y):
+    def calculate_loss(self, prediction, y):
         if self.loss == 'binary_cross_entropy':
-            return [-y * np.log(prediction) - (1 - y) * np.log(1 - prediction) for prediction in predictions]
+            return -y * np.log(prediction) - (1 - y) * np.log(1 - prediction)
     
     def loss_derivative(self, prediction, y):
         if self.loss == 'binary_cross_entropy':
             return -y / prediction + (1 - y) / (1 - prediction)
 
-    def backpropagation(self, X, y, predictions, learning_rate):
-        
-        # calculate gradients and update output layer parameters
+    def backpropagation(self, y, predictions, learning_rate):
+            
+         # Output layer
         for neuron, prediction in zip(self.output_layer.neurons, predictions):
-            bias_gradient = neuron.activation_derivative(prediction) * self.loss_derivative(prediction, y)
-            weight_gradients = [x * bias_gradient for x in neuron.inputs]
-            neuron.w -= learning_rate * np.array(weight_gradients)
-            neuron.b -= learning_rate * bias_gradient
-        
+            neuron.compute_gradients(self.loss_derivative(prediction, y))
+            neuron.update_parameters(learning_rate)
+
+        # Hidden layers
+        for layer_idx in reversed(range(self.hidden_layers.depth)):
+            prev_layer = self.output_layer.neurons if layer_idx == self.hidden_layers.depth - 1 else self.hidden_layers.layers[layer_idx + 1]
+            for neuron_idx, neuron in enumerate(self.hidden_layers.layers[layer_idx]):
+                neuron.compute_gradients(sum([prev_neuron.gradient * prev_neuron.w[neuron_idx] for prev_neuron in prev_layer]))
+                neuron.update_parameters(learning_rate)
+
+        # Input layer
+        for neuron_idx, neuron in enumerate(self.input_layer.neurons):
+            neuron.compute_gradients(sum([hidden_neuron.gradient * hidden_neuron.w[neuron_idx] for hidden_neuron in self.hidden_layers.layers[0]]))
+            neuron.update_parameters(learning_rate)
+
 
     def train(self, X, y, epochs=10, learning_rate=0.05):
         for epoch in range(epochs):
@@ -91,7 +111,7 @@ class NeuralNetwork:
             for Xi, yi in zip(X, y):
                 predictions, loss = self.forward_pass(Xi, yi)
                 losses = np.append(losses, loss)
-                self.backpropagation(Xi, yi, predictions, learning_rate)
+                self.backpropagation(yi, predictions, learning_rate)
             if epoch < 10 or epoch % 10 == 0:
                 print(f"Epoch: {epoch}, Loss: {losses.mean()}")
 
@@ -99,8 +119,8 @@ class NeuralNetwork:
         input_layer_output = self.input_layer.forward(X)
         hidden_layers_output = self.hidden_layers.forward(input_layer_output)
         predictions = self.output_layer.forward(hidden_layers_output)
-        losses = self.calculate_loss(predictions, y) if y is not None else None
-        return predictions, losses
+        loss = [self.calculate_loss(prediction, y) for prediction in predictions] if y is not None else None
+        return predictions, loss
     
 
 input_layer = InputLayer(n_inputs=2, activation='tanh')
@@ -109,10 +129,10 @@ output_layer = OutputLayer(prev_layer=hidden_layers, activation='sigmoid')
 
 model = NeuralNetwork(input_layer, hidden_layers, output_layer)
 
-# prediction, loss = model.forward_pass(np.array([1, 2]), 1)
-# print(prediction, loss)
-
 df = pd.read_csv('fluffy_or_spikey.csv')
 X, y = df[['height', 'color']].to_numpy(), df['species'].to_numpy()
 
-model.train(X, y, 2)
+model.train(X, y, 150)
+
+df = df.sample(frac=1).reset_index(drop=True)
+X_test, y_test = df[['height', 'color']].to_numpy(), df['species'].to_numpy()
