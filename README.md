@@ -1,6 +1,19 @@
 # NeuralNetExplorers: the Magic of Neural Networks
 
-Discover the magic of neural networks with NeuralNetExplorers, an educational repository focused on building a first principles understanding of neurons and neural networks
+Discover the magic of neural networks with NeuralNetExplorers, an educational repository focused on building a first principles understanding of neurons and neural networks.
+
+The primary intention of this repository is to provide an educational resource for those seeking to build a first principles understanding of artificial intelligence, particularly focusing on neural networks. By breaking down the essential components of neural networks and their associated algorithms, this repository aims to offer a solid foundation for grasping the inner workings of these powerful models.
+
+Through the exploration of the provided code and accompanying explanations, learners can develop a deeper comprehension of the following key concepts:
+
+1. Neurons: Understanding the building blocks of neural networks and their functionalities, including weights, biases, and activation functions.
+2. Neural network architecture: Gaining insights into how neurons are connected and organized within input, hidden, and output layers.
+3. Activation functions: Learning the role of activation functions, such as sigmoid and hyperbolic tangent (tanh), and their derivatives in transforming neuron inputs to outputs.
+4. Loss functions: Recognizing the importance of loss functions, such as binary cross-entropy, in measuring the performance of a neural network.
+5. Backpropagation: Grasping the backpropagation algorithm and how it's used to update neuron weights and biases to minimize the loss function.
+6. Training process: Familiarizing oneself with the overall training process, which includes forward passes, loss calculation, and backpropagation over multiple epochs.
+
+By studying and experimenting with the provided code, learners can acquire a hands-on understanding of how these concepts work together to form a functioning neural network. Additionally, by working with a simple dataset containing information about magical creatures (Fluffies and Spikies), users can observe how neural networks can be applied to real-world problems, such as classification tasks.
 
 ## Dataset
 
