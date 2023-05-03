@@ -96,12 +96,14 @@ class NeuralNetwork:
         for layer_idx in reversed(range(self.hidden_layers.depth)):
             prev_layer = self.output_layer.neurons if layer_idx == self.hidden_layers.depth - 1 else self.hidden_layers.layers[layer_idx + 1]
             for neuron_idx, neuron in enumerate(self.hidden_layers.layers[layer_idx]):
-                neuron.compute_gradients(sum([prev_neuron.gradient * prev_neuron.w[neuron_idx] for prev_neuron in prev_layer]))
+                prev_layer_gradient = sum([prev_neuron.gradient * prev_neuron.w[neuron_idx] for prev_neuron in prev_layer])
+                neuron.compute_gradients(prev_layer_gradient)
                 neuron.update_parameters(learning_rate)
 
         # Input layer
         for neuron_idx, neuron in enumerate(self.input_layer.neurons):
-            neuron.compute_gradients(sum([hidden_neuron.gradient * hidden_neuron.w[neuron_idx] for hidden_neuron in self.hidden_layers.layers[0]]))
+            prev_layer_gradient = sum([hidden_neuron.gradient * hidden_neuron.w[neuron_idx] for hidden_neuron in self.hidden_layers.layers[0]])
+            neuron.compute_gradients(prev_layer_gradient)
             neuron.update_parameters(learning_rate)
 
 
