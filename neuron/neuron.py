@@ -21,7 +21,7 @@ class Neuron:
     def backpropagation(self, X, y, prediction, learning_rate):
         bias_gradient = self.sigmoid_derivative(prediction) * self.binary_cross_entropy_loss_derivative(prediction, y)
         weight_gradients = np.array([x * bias_gradient for x in X])
-        self.w -= learning_rate * np.array(weight_gradients)
+        self.w -= learning_rate * weight_gradients
         self.b -= learning_rate * bias_gradient
 
     def train (self, X, y, epochs=10, learning_rate=0.05):
