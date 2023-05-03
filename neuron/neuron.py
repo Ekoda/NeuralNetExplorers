@@ -40,7 +40,7 @@ class Neuron:
         return prediction, loss
 
 
-df = pd.read_csv('fluffy_or_spikey.csv').sample(frac=1).reset_index(drop=True)
+df = pd.read_csv('../data/fluffy_or_spikey.csv').sample(frac=1).reset_index(drop=True)
 
 X_train, y_train = df[['height', 'color']].to_numpy(), df['species'].to_numpy()
 
