@@ -24,7 +24,8 @@ The species are represented as:
 
 1. Clone the repository: `git clone https://github.com/yourusername/NeuralNetExplorers.git`
 2. Install the required dependencies: `pip install numpy pandas`
-4. Run the Neuron code to train the neuron: `python neuron.py`
+3. Run the Neuron code to train the neuron: `python neuron.py`
+4. Run the Neural Network code to train the network: `python neural_net.py`
 
 ## Neuron Code Overview
 
@@ -39,6 +40,27 @@ The neuron code consists of a `Neuron` class that implements the following metho
 - `forward_pass`: Performs a forward pass on the given input and computes the loss if the true label is provided.
 
 The code reads the dataset, shuffles it, and trains the neuron model using the dataset. The model's performance is evaluated based on the mean loss for each epoch.
+
+## Neural Network Code Overview
+
+The neural network code consists of several classes that build and train the neural network model:
+
+1. `Neuron`: Represents a single neuron with its weights, bias, and activation function.
+2. `InputLayer`: Represents the input layer of the neural network, containing multiple neurons.
+3. `HiddenLayers`: Represents the hidden layers of the neural network, containing multiple layers with multiple neurons in each layer.
+4. `OutputLayer`: Represents the output layer of the neural network, containing multiple neurons.
+5. `NeuralNetwork`: Represents the complete neural network, connecting the input, hidden, and output layers, and implementing the training process.
+
+These classes implement the following main methods:
+
+- `forward`: Performs a forward pass on the given input to compute the output of the neuron or layer.
+- `activation` and `activation_derivative`: Compute the activation function and its derivative for a given input, depending on the activation function used ('sigmoid' or 'tanh').
+- `compute_gradients`: Computes the gradients for the weights and biases of a neuron, given the upstream gradient.
+- `update_parameters`: Updates the neuron's weights and biases using the computed gradients and a learning rate.
+- `backpropagation`: Performs backpropagation to update the weights and biases of the neurons in the input, hidden, and output layers.
+- `train`: Trains the neural network on the given dataset for a specified number of epochs and learning rate.
+
+The code reads the dataset (fluffy_or_spikey.csv), shuffles it, and trains the neural network model using the dataset. The model's performance is evaluated based on the mean loss for each epoch.
 
 ## Contributing
 
