@@ -5,7 +5,7 @@ class RecurrentNeuron:
     def __init__(self, n_inputs=2):
         self.w = np.random.randn(n_inputs) * 0.01
         self.b = np.random.randn() * 0.01
-        self.hidden_weight = np.random.randn() * 0.01
+        self.hw = np.random.randn() * 0.01
 
     def tanh_activation(self, n):
         return np.tanh(n)
@@ -26,7 +26,7 @@ class RecurrentNeuron:
             hidden_weight_gradient = bias_gradient * (predictions[t-1] if t > 0 else 0)
             self.w -= learning_rate * weight_gradients
             self.b -= learning_rate * bias_gradient
-            self.hidden_weight -= learning_rate * hidden_weight_gradient
+            self.hw -= learning_rate * hidden_weight_gradient
 
     def train(self, X_seq, y_seq, epochs=10, learning_rate=0.05):
         for epoch in range(epochs + 1):
@@ -39,12 +39,10 @@ class RecurrentNeuron:
                 print(f"Epoch: {epoch}, Loss: {epoch_losses.mean()}")
 
     def forward_pass(self, X_seq, y_seq=None):
-        hidden_states = np.zeros(len(X_seq))
         predictions = np.zeros(len(X_seq))
         losses = np.zeros(len(X_seq))
         for t in range(len(X_seq)):
-            hidden_states[t] = self.tanh_activation(np.dot(self.w, X_seq[t]) + self.hidden_weight * (hidden_states[t-1] if t > 0 else 0) + self.b)
-            predictions[t] = hidden_states[t]
+            predictions[t] = self.tanh_activation(np.dot(self.w, X_seq[t]) + self.hw * (predictions[t-1] if t > 0 else 0) + self.b)
             losses[t] = self.mse_loss(predictions[t], y_seq[t]) if y_seq is not None else None
         return predictions, losses
 
