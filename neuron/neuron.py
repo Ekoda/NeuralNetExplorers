@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 
 class Neuron:
-    def __init__(self):
-        self.w = np.random.randn(2) * 0.01
+    def __init__(self, n_inputs=2):
+        self.w = np.random.randn(n_inputs) * 0.01
         self.b = np.random.randn() * 0.01
 
     def sigmoid_activation(self, n):
@@ -40,7 +40,7 @@ class Neuron:
         return prediction, loss
 
 
-df = pd.read_csv('../data/fluffy_or_spikey.csv').sample(frac=1).reset_index(drop=True)
+df = pd.read_csv('data/creatures.csv').sample(frac=1).reset_index(drop=True)
 
 X_train, y_train = df[['height', 'color']].to_numpy(), df['species'].to_numpy()
 

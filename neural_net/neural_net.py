@@ -131,7 +131,8 @@ output_layer = OutputLayer(prev_layer=hidden_layers, activation='sigmoid')
 
 model = NeuralNetwork(input_layer, hidden_layers, output_layer)
 
-df = pd.read_csv('../data/fluffy_or_spikey.csv')
+
+df = pd.read_csv('data/creatures.csv')
 X, y = df[['height', 'color']].to_numpy(), df['species'].to_numpy()
 
 model.train(X, y, 150)
