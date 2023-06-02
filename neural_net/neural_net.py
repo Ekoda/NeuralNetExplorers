@@ -80,19 +80,21 @@ class NeuralNetwork:
     def calculate_loss(self, prediction, y):
         if self.loss == 'binary_cross_entropy':
             return -y * np.log(prediction) - (1 - y) * np.log(1 - prediction)
+        elif self.loss == 'mse':
+            return np.mean((prediction - y)**2)
     
     def loss_derivative(self, prediction, y):
         if self.loss == 'binary_cross_entropy':
             return -y / prediction + (1 - y) / (1 - prediction)
+        elif self.loss == 'mse':
+            return 2 * (prediction - y)
 
     def backpropagation(self, y, predictions, learning_rate):
-            
-         # Output layer
+
         for neuron, prediction in zip(self.output_layer.neurons, predictions):
             neuron.compute_gradients(self.loss_derivative(prediction, y))
             neuron.update_parameters(learning_rate)
 
-        # Hidden layers
         for layer_idx in reversed(range(self.hidden_layers.depth)):
             prev_layer = self.output_layer.neurons if layer_idx == self.hidden_layers.depth - 1 else self.hidden_layers.layers[layer_idx + 1]
             for neuron_idx, neuron in enumerate(self.hidden_layers.layers[layer_idx]):
@@ -100,7 +102,6 @@ class NeuralNetwork:
                 neuron.compute_gradients(prev_layer_gradient)
                 neuron.update_parameters(learning_rate)
 
-        # Input layer
         for neuron_idx, neuron in enumerate(self.input_layer.neurons):
             prev_layer_gradient = sum([hidden_neuron.gradient * hidden_neuron.w[neuron_idx] for hidden_neuron in self.hidden_layers.layers[0]])
             neuron.compute_gradients(prev_layer_gradient)
