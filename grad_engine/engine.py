@@ -108,7 +108,7 @@ def mean(X: list[float]) -> float:
     return sum(X) / len(X)
 
 
-class Module:
+class NeuralComponent:
     def zero_grad(self):
         for p in self.parameters():
             p.gradient = 0
@@ -117,9 +117,9 @@ class Module:
         return []
 
 
-class Neuron(Module):
-    def __init__(self, n_inputs=2, activation='sigmoid'):
-        self.w = [ValueNode(np.random.randn() * 0.01) for _ in range(n_inputs)]
+class Neuron(NeuralComponent):
+    def __init__(self, input_size=2, activation='sigmoid'):
+        self.w = [ValueNode(np.random.randn() * 0.01) for _ in range(input_size)]
         self.b = ValueNode(np.random.randn() * 0.01)
         self.activation = activation
 
@@ -141,9 +141,9 @@ class Neuron(Module):
         return prediction
 
 
-class NeuronLayer(Module):
-    def __init__(self, n_inputs:int, n_outputs:int, activation:str, loss:str='binary_cross_entropy'):
-        self.neurons = [Neuron(n_inputs, activation) for _ in range(n_outputs)]
+class NeuronLayer(NeuralComponent):
+    def __init__(self, input_size:int, output_size:int, activation:str, loss:str='binary_cross_entropy'):
+        self.neurons = [Neuron(input_size, activation) for _ in range(output_size)]
     
     def parameters(self):
         return [p for n in self.neurons for p in n.parameters()]
@@ -152,11 +152,11 @@ class NeuronLayer(Module):
         return [n.forward(X) for n in self.neurons]
 
 
-class FeedForwardNetwork(Module):
-    def __init__(self, n_inputs:int, n_outputs:int):
-        self.n_inputs = n_inputs
-        self.n_outputs = n_outputs
-        self.layers = [NeuronLayer(n_inputs, n_inputs, 'relu'), NeuronLayer(n_inputs, n_outputs, 'sigmoid')]
+class FeedForwardNetwork(NeuralComponent):
+    def __init__(self, input_size:int, output_size:int):
+        self.n_inputs = input_size
+        self.n_outputs = output_size
+        self.layers = [NeuronLayer(input_size, input_size, 'relu'), NeuronLayer(input_size, output_size, 'sigmoid')]
 
     def parameters(self):
         return [p for layer in self.layers for p in layer.parameters()]
