@@ -122,23 +122,28 @@ class Neuron(NeuralComponent):
         self.w = [ValueNode(np.random.randn() * 0.01) for _ in range(input_size)]
         self.b = ValueNode(np.random.randn() * 0.01)
         self.activation = activation
+        self.activation_functions = {
+            'sigmoid': self.sigmoid, 
+            'relu': self.relu, 
+            'linear': self.linear
+            }
+
+    def sigmoid(self, x):
+        return x.sigmoid()
+
+    def relu(self, x):
+        return x.relu()
+
+    def linear(self, x):
+        return x
 
     def parameters(self):
         return self.w + [self.b]
 
     def forward(self, X):
-        linear = dot(X, self.w) + self.b
-        prediction = None
-
-        if self.activation == 'sigmoid':
-            prediction = linear.sigmoid()
-        elif self.activation == 'relu':
-            prediction = linear.relu()
-        elif self.activation == 'linear':
-            prediction = linear
-        else:
-            return ValueError('Activation not supported')   
-        return prediction
+        pre_activation = dot(X, self.w) + self.b
+        activation_function = self.activation_functions[self.activation]
+        return activation_function(pre_activation)
 
 
 class NeuronLayer(NeuralComponent):
