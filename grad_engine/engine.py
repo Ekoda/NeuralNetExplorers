@@ -2,6 +2,7 @@ import random
 import numpy as np
 import pandas as pd
 
+
 class ValueNode:
     def __init__(self, data: float, children: tuple = (), operation: str = ''):
         self.data = data
@@ -96,8 +97,8 @@ class ValueNode:
         return other * (self ** -1)
 
     def __repr__(self):
-        return str(self.data)
-        # return f"ValueNode(data={self.data}, gradient={self.gradient})"
+        return f"ValueNode(data={self.data}, gradient={self.gradient})"
+
 
 def dot(A: list[ValueNode], B: list[ValueNode]) -> ValueNode:
     assert len(A) == len(B), "Dot product requires arrays of the same length"
@@ -174,7 +175,7 @@ class FeedForwardNetwork(Module):
                 for p in self.parameters():
                     p.data -= learning_rate * p.gradient
             if epoch < 10 or epoch % 10 == 0:
-                print(f"Epoch: {epoch}, Loss: {mean(losses)}")
+                print(f"Epoch: {epoch}, Loss: {mean(losses).data}")
 
     def forward(self, X, y):
         for layer in self.layers:
