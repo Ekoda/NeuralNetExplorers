@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+
 class Neuron:
     def __init__(self, n_inputs=2, activation='tanh'):
         self.w = np.random.randn(n_inputs) * 0.1
@@ -22,7 +23,7 @@ class Neuron:
             return self.output * (1 - self.output)
         elif self.activation_type == 'tanh':
             return 1 - self.output ** 2
-        
+
     def compute_gradients(self, upstream_gradient):
         self.gradient = upstream_gradient * self.activation_derivative()
         self.w_gradients = self.gradient * self.inputs
@@ -35,7 +36,7 @@ class Neuron:
         output = self.activation(np.dot(self.w, X) + self.b)
         self.inputs, self.output = X, output
         return output
-    
+
 
 def forward_layer(neurons, inputs):
     return np.array([neuron.forward(inputs) for neuron in neurons])
@@ -107,7 +108,6 @@ class NeuralNetwork:
             neuron.compute_gradients(prev_layer_gradient)
             neuron.update_parameters(learning_rate)
 
-
     def train(self, X, y, epochs=10, learning_rate=0.05):
         for epoch in range(epochs):
             losses = np.array([])
@@ -124,7 +124,7 @@ class NeuralNetwork:
         predictions = self.output_layer.forward(hidden_layers_output)
         loss = [self.calculate_loss(prediction, y) for prediction in predictions] if y is not None else None
         return predictions, loss
-    
+
 
 input_layer = InputLayer(n_inputs=2, activation='tanh')
 hidden_layers = HiddenLayers(prev_layer=input_layer, height=3, depth=2, activation='tanh')

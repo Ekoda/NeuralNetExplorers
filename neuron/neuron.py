@@ -1,16 +1,17 @@
 import numpy as np
 import pandas as pd
 
+
 class Neuron:
     def __init__(self, n_inputs=2):
-        self.w = np.random.randn(n_inputs) * 0.01
-        self.b = np.random.randn() * 0.01
+        self.w = np.random.randn(n_inputs) * 0.1
+        self.b = np.random.randn() * 0.1
 
     def sigmoid_activation(self, n):
         return 1 / (1 + np.exp(-n))
     
     def sigmoid_derivative(self, n):
-        return  n * (1 - n)
+        return n * (1 - n)
     
     def binary_cross_entropy_loss(self, prediction, y):
         return -y * np.log(prediction) - (1 - y) * np.log(1 - prediction)
@@ -44,5 +45,5 @@ df = pd.read_csv('data/creatures.csv').sample(frac=1).reset_index(drop=True)
 
 X_train, y_train = df[['height', 'color']].to_numpy(), df['species'].to_numpy()
 
-model = Neuron() 
+model = Neuron()
 model.train(X_train, y_train, epochs=100)
